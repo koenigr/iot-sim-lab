@@ -1,2 +1,0 @@
-- **Static Analysis**: clang-tidy, Config `.clang-tidy`, läuft in CI (`.github/workflows/ci.yml`)
-- **Code Style**: clang-format, Config `.clang-format`, Format-Check in CI
