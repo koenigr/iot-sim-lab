@@ -1,0 +1,5 @@
+BasedOnStyle: Google
+IndentWidth: 4
+ColumnWidth: 100
+AccessModifierOffset: -4
+SortIncludes: true
