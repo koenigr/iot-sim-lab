@@ -12,3 +12,6 @@ Checks: >
   -cppcoreguidelines-pro-bounds-pointer-arithmetic
 WarningsAsErrors: ''
 HeaderFilterRegex: '^(sensor-node|collector)/'
+CheckOptions:
+  - key: readability-identifier-length.MinimumVariableNameLength
+    value: 2

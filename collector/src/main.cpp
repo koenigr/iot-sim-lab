@@ -1,6 +1,6 @@
 #include <iostream>
 
 int main() {
-    std::cout << "sensor-node\n";
+    std::cout << "collector\n";
     return 0;
 }
