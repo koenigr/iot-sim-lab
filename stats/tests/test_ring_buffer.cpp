@@ -37,7 +37,9 @@ TEST(RingBuffer, OverwritesOldestWhenFull) {
 
 TEST(RingBuffer, WrapsMultipleTimes) {
     RingBuffer<int, 3> rb;
-    for (int i = 1; i <= 7; ++i) {rb.push(i);}
+    for (int i = 1; i <= 7; ++i) {
+        rb.push(i);
+    }
     EXPECT_EQ(rb[0], 5);
     EXPECT_EQ(rb[1], 6);
     EXPECT_EQ(rb[2], 7);
@@ -62,7 +64,9 @@ TEST(RingBuffer, ConstAccess) {
 
 TEST(RingBuffer, IterationInInsertionOrder) {
     RingBuffer<int, 3> rb;
-    for (int i = 1; i <= 5; ++i) {rb.push(i);}  // contents: 3, 4, 5
+    for (int i = 1; i <= 5; ++i) {
+        rb.push(i);
+    }  // contents: 3, 4, 5
     int expected = 3;
     for (int value : rb) {
         EXPECT_EQ(v, expected++);
