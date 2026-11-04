@@ -6,17 +6,17 @@ using stats::RingBuffer;
 
 TEST(RingBuffer, StartsEmpty) {
     RingBuffer<float, 3> rb;
-    EXPECT_EQ(rb.size(), 0u);
+    EXPECT_EQ(rb.size(), 0U);
     EXPECT_TRUE(rb.empty());
     EXPECT_FALSE(rb.full());
-    EXPECT_EQ(rb.capacity(), 3u);
+    EXPECT_EQ(rb.capacity(), 3U);
 }
 
 TEST(RingBuffer, PushBelowCapacity) {
     RingBuffer<float, 3> rb;
     rb.push(1);
     rb.push(2);
-    EXPECT_EQ(rb.size(), 2u);
+    EXPECT_EQ(rb.size(), 2U);
     EXPECT_FLOAT_EQ(rb[0], 1);
     EXPECT_FLOAT_EQ(rb[1], 2);
     EXPECT_FALSE(rb.full());
@@ -28,7 +28,7 @@ TEST(RingBuffer, OverwritesOldestWhenFull) {
     rb.push(2);
     rb.push(3);
     rb.push(4);
-    EXPECT_EQ(rb.size(), 3u);
+    EXPECT_EQ(rb.size(), 3U);
     EXPECT_TRUE(rb.full());
     EXPECT_FLOAT_EQ(rb[0], 2);
     EXPECT_FLOAT_EQ(rb[1], 3);
@@ -37,7 +37,7 @@ TEST(RingBuffer, OverwritesOldestWhenFull) {
 
 TEST(RingBuffer, WrapsMultipleTimes) {
     RingBuffer<int, 3> rb;
-    for (int i = 1; i <= 7; ++i) rb.push(i);
+    for (int i = 1; i <= 7; ++i) {rb.push(i);}
     EXPECT_EQ(rb[0], 5);
     EXPECT_EQ(rb[1], 6);
     EXPECT_EQ(rb[2], 7);
@@ -62,9 +62,9 @@ TEST(RingBuffer, ConstAccess) {
 
 TEST(RingBuffer, IterationInInsertionOrder) {
     RingBuffer<int, 3> rb;
-    for (int i = 1; i <= 5; ++i) rb.push(i);  // contents: 3, 4, 5
+    for (int i = 1; i <= 5; ++i) {rb.push(i);}  // contents: 3, 4, 5
     int expected = 3;
-    for (int v : rb) {
+    for (int value : rb) {
         EXPECT_EQ(v, expected++);
     }
     EXPECT_EQ(expected, 6);
