@@ -69,7 +69,7 @@ TEST(RingBuffer, IterationInInsertionOrder) {
     }  // contents: 3, 4, 5
     int expected = 3;
     for (int value : rb) {
-        EXPECT_EQ(v, expected++);
+        EXPECT_EQ(value, expected++);
     }
     EXPECT_EQ(expected, 6);
 }
