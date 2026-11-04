@@ -28,5 +28,4 @@ Hardware-free C++/IoT practice project: simulated sensor nodes publish data via 
 ## Close the broker
 
     docker compose -f deploy/docker-compose.yml down
-    
     (docker compose -f deploy/docker-compose.yml stop)
