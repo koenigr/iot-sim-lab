@@ -9,6 +9,7 @@ add_compile_options(-Wall -Wextra -Wpedantic)
 enable_testing()
 add_subdirectory(sensor-node)
 add_subdirectory(collector)
+add_subdirectory(stats)
 
 option(ENABLE_CLANG_TIDY "Run clang-tidy during build" OFF)
 if(ENABLE_CLANG_TIDY)
