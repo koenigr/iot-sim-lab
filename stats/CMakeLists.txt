@@ -14,6 +14,7 @@ set_target_properties(gtest gtest_main gmock gmock_main PROPERTIES CXX_CLANG_TID
 add_executable(stats_tests
 	tests/test_ring_buffer.cpp
 	tests/test_moving_average.cpp
+	tests/test_ewma.cpp
 )
 
 target_link_libraries(stats_tests PRIVATE stats GTest::gtest_main)
