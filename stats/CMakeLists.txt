@@ -15,6 +15,10 @@ add_executable(stats_tests
 	tests/test_ring_buffer.cpp
 	tests/test_moving_average.cpp
 	tests/test_ewma.cpp
+	tests/test_ewma_fixed.cpp
+	tests/test_median_filter.cpp
+	tests/test_welford.cpp
+	tests/test_zscore_detector.cpp
 )
 
 target_link_libraries(stats_tests PRIVATE stats GTest::gtest_main)

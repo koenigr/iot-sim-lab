@@ -38,7 +38,7 @@ TEST(MedianFilter, LargerWindowRemovesTwoSpikes) {
 	for (int v : {1, 2, 3, 4}) {
 		EXPECT_FALSE(m.push(v).has_value());
 	}
-	EXPECT_EQ(*m.push(100), 4);  // {1,2,3,4,100}
+	EXPECT_EQ(*m.push(100), 3);  // {1,2,3,4,100}
 	EXPECT_EQ(*m.push(100), 4);  // {2,3,4,100,100}
 }
 

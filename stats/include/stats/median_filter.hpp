@@ -16,8 +16,9 @@ namespace stats {
 	public:
 		// Pushes a sample. Returns the median once the window is full,
 		// std::nullopt before that.
-		std::optional<T> push(T samlple) {
+		std::optional<T> push(T sample) {
 			buf_[head_] = sample;
+			head_ = (head_ + 1) % N;
 			if (count_ < N) {
 				++count_;
 			}
@@ -25,7 +26,7 @@ namespace stats {
 		}
 
 		bool full() const { return count_ == N; }
-		std::size_t size() const {  return count_ };
+		std::size_t size() const {  return count_; }
 		static constexpr std::size_t window() {  return N; }
 
 		void reset() {
@@ -44,6 +45,6 @@ namespace stats {
 		std::array<T, N> buf_{};
 		std::size_t head_ = 0;
 		std::size_t count_ = 0;
-	}
+	};
 
-}
+} // namespace
