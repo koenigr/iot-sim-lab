@@ -19,9 +19,15 @@ add_executable(stats_tests
 	tests/test_median_filter.cpp
 	tests/test_welford.cpp
 	tests/test_zscore_detector.cpp
+	tests/test_ground_truth.cpp
 )
 
-target_link_libraries(stats_tests PRIVATE stats GTest::gtest_main)
+target_link_libraries(stats_tests
+	PRIVATE
+		stats 
+		gtest_main
+		generator
+)
 
 include(GoogleTest)
 gtest_discover_tests(stats_tests)
