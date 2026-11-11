@@ -93,4 +93,9 @@ TEST(GroundTruth, DetectorPrecisionRecall) {
     EXPECT_GT(c.tp + c.fn, 0);
     EXPECT_GE(precision(c), 0.9);
     EXPECT_GE(recall(c), 0.9);
+
+    // 21 injected spikes, 21 detected, 0 false alarms
+    EXPECT_EQ(c.tp, 21);
+    EXPECT_EQ(c.fp, 0);
+    EXPECT_EQ(c.fn, 0);
 }
