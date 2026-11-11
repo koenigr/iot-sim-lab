@@ -43,6 +43,7 @@ build/
 Build/
 build-*/
 build-tidy/
+build-rel/
 
 # CMake generated files
 CMakeFiles/

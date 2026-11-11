@@ -24,10 +24,25 @@ add_executable(stats_tests
 
 target_link_libraries(stats_tests
 	PRIVATE
-		stats 
+		stats
 		gtest_main
 		generator
 )
 
 include(GoogleTest)
 gtest_discover_tests(stats_tests)
+
+option(STATS_BUILD_BENCH "Build micro-benchmarks" ON)
+if(STATS_BUILD_BENCH)
+	set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "" FORCE)
+	set(BENCHMARK_ENABLE_GTEST_TESTS OFF CACHE BOOL "" FORCE)
+	FetchContent_Declare(
+		googlebenchmark
+		URL https://github.com/google/Benchmark/archive/refs/tags/v1.8.5.zip
+	)
+	FetchContent_MakeAvailable(googlebenchmark)
+	set_target_properties(benchmark benchmark_main PROPERTIES CXX_CLANG_TIDY "")
+
+	add_executable(stats_bench bench/stats_bench.cpp)
+	target_link_libraries(stats_bench PRIVATE stats benchmark::benchmark_main)
+endif()
