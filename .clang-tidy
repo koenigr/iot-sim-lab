@@ -11,7 +11,7 @@ Checks: >
   -cppcoreguidelines-avoid-magic-numbers,
   -cppcoreguidelines-pro-bounds-pointer-arithmetic
 WarningsAsErrors: ''
-HeaderFilterRegex: '^(sensor-node|collector)/'
+HeaderFilterRegex: '^(sensor-node|collector|stats)/'
 CheckOptions:
   - key: readability-identifier-length.MinimumVariableNameLength
     value: 2
