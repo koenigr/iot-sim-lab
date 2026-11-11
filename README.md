@@ -27,6 +27,8 @@ No heap allocation, header-only, namespace `stats`.
 
 The detector does not feed anomalous samples into its statistics (avoids masking); see the header comment for the trade-off.
 
+See more details: [streaming-stats.md](docs/streaming-stats.md)
+
 ### Tests with known data
 
 `stats/tests/test_ground_truth.cpp` runs filters and the detector on generator data (seed 42):
