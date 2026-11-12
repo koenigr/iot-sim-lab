@@ -35,7 +35,7 @@ const std::array<std::int32_t, kMask + 1>& inputs_q16() {
         std::array<std::int32_t, kMask + 1> v{};
         const auto& f = inputs();
         for (std::size_t i = 0; i < v.size(); ++i) {
-                        v[i] = static_cast<std::int32_t>(f[i] * 65536.0f]);
+                                                v[i] = static_cast<std::int32_t>(f[i] * 65536.0f]);
         }
         return v;
     }();

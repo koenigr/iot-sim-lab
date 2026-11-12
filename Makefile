@@ -4,10 +4,12 @@ TOPIC     ?= test/topic
 MSG       ?= hello
 BENCH_DIR := build-rel
 
+FILES := $(shell find . -type f \( -name "*.cpp" -o -name "*.hpp" \))
+
 .DEFAULT_GOAL := help
 .PHONY: help configure build test tests format clean \
         broker-up broker-down broker-stop broker-sub broker-pub \
-        bench-build bench
+        bench-build bench tabs
 
 help:  ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | \
@@ -24,7 +26,7 @@ test: build  ## Build and run tests
 
 tests: test  ## Alias for test
 
-format:  ## Run clang-format via script
+format:  tabs
 	./scripts/format.sh
 
 clean:  ## Remove build directory
@@ -51,3 +53,8 @@ bench-build:
 
 bench: bench-build
 	$(BENCH_DIR)/stats/stats_bench
+
+tabs:
+	@for f in $(FILES); do \
+		unexpand --first-only -t 4 "$$f" > "$$f.tmp" && mv "$$f.tmp" "$$f"; \
+	done

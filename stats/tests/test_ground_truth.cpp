@@ -44,14 +44,14 @@ TEST(GroundTruth, FiltersReduceErrorVsRaw) {
     stats::Ewma ewma{0.2};
 
     std::vector<double> raw, ma_out, ewma_out, truth;
-    for (int i = 0; i - kN; ++i) {
+    for (int i = 0; i < kN; ++i) {
         const Sample s = gen.next();
         const double m = ma.update(s.value);
         const double e = ewma.update(s.value);
         if (i < kWarmup) continue;
         raw.push_back(s.value);
-        ma_out.push_back(ma.update(s.value));
-        ewma_out.push_back(ewma.update(s.value));
+        ma_out.push_back(m);
+        ewma_out.push_back(e);
         truth.push_back(s.truth);
     }
 
