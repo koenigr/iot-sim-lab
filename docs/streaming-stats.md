@@ -2,7 +2,7 @@
 
 `stats::RingBuffer<T, N>` (`stats/include/stats/ring_buffer.hpp`, header-only)
 
-Fixed-size circular buffer backed by `std::array<T, N>`, capacity `N > 0`, element type `T`. No heap allocation.
+Fixed-size circular buffer backed by `std::array<T, N>`, capacity `N > 0`, element type `T`. No heap allocation.  
 Holds the last `N` sensor measurements.
 
 - `push()` fills the buffer until it is full, then overwrites the oldest element.
