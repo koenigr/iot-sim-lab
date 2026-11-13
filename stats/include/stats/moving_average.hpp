@@ -20,7 +20,7 @@ class MovingAverage {
 public:
     // Adds a sample and returns the current average.
     T update(T sample) {
-        if (buffer_.size() == N) {
+        if (buffer_.full()) {
             sum_ -= *buffer_.begin();  // oldest sample is about to be overwritten
         }
         buffer_.push(sample);
@@ -29,7 +29,7 @@ public:
     }
 
     // Current average; 0 if no sample has been received yet.
-    T value() const { return buffer_.size() == 0 ? T{0} : sum_ / static_cast<T>(buffer_.size()); }
+    T value() const { return buffer_.empty() ? T{0} : sum_ / static_cast<T>(buffer_.size()); }
 
     std::size_t size() const { return buffer_.size(); }
     static constexpr std::size_t window() { return N; }
