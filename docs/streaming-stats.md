@@ -27,7 +27,7 @@ flowchart LR
     NEW(["rb[4]<br/>newest = 7"]) --> S1
 ```
 
-Logical index to slot: `rb[0]`=slot 2, `rb[1]`=slot 3, `rb[2]`=slot 4, `rb[3]`=slot 0, `rb[4]`=slot 1.
+Logical index to slot: `rb[0]`=slot 2, `rb[1]`=slot 3, `rb[2]`=slot 4, `rb[3]`=slot 0, `rb[4]`=slot 1.  
 `end()` is logical index 5 (`count_`), one past the last element.
 
 Mapping: `slot = (head_ + N - count_ + i) % N`. The `+ N` keeps the unsigned subtraction from wrapping.
