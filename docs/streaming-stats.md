@@ -2,7 +2,8 @@
 
 `stats::RingBuffer<T, N>` (`stats/include/stats/ring_buffer.hpp`, header-only)
 
-Fixed-size circular buffer backed by `std::array<T, N>`, capacity `N > 0`, element type `T`. No heap allocation. Holds the last `N` sensor measurements.
+Fixed-size circular buffer backed by `std::array<T, N>`, capacity `N > 0`, element type `T`. No heap allocation.
+Holds the last `N` sensor measurements.
 
 - `push()` fills the buffer until it is full, then overwrites the oldest element.
 - `operator[](i)`: element `i` in insertion order, `rb[0]` is the oldest. No bounds check.
@@ -26,7 +27,8 @@ flowchart LR
     NEW(["rb[4]<br/>newest = 7"]) --> S1
 ```
 
-Logical index to slot: `rb[0]`=slot 2, `rb[1]`=slot 3, `rb[2]`=slot 4, `rb[3]`=slot 0, `rb[4]`=slot 1. `end()` is logical index 5 (`count_`), one past the last element.
+Logical index to slot: `rb[0]`=slot 2, `rb[1]`=slot 3, `rb[2]`=slot 4, `rb[3]`=slot 0, `rb[4]`=slot 1.
+`end()` is logical index 5 (`count_`), one past the last element.
 
 Mapping: `slot = (head_ + N - count_ + i) % N`. The `+ N` keeps the unsigned subtraction from wrapping.
 
