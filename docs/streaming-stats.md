@@ -46,6 +46,8 @@ for (float value : rb) { /* 2, 3, 4 */ }
 
 ## Welford and numerical stability
 
+`stats/include/stats/welford.hpp`, header-only
+
 Computes mean and variance one sample at a time in O(1) memory, without storing samples.
 
 State: `n`, `mean`, `m2` (sum of squared deviations from the current mean).
@@ -64,8 +66,28 @@ Why not `E[x²] − E[x]²`: it subtracts two large, nearly equal numbers and lo
 
 Edge cases: sample variance is NaN for `n < 2`.
 
-Code: `stats/include/stats/welford.hpp`, tests: `stats/tests/test_welford.cpp`
+In `iot-sim-lab`, Welford runs in the collector to keep a running mean and stddev per sensor stream, e.g. a temperature node. Each new reading gets `z = (x - mean) / stddev`. If `|z|` exceeds the threshold (e.g. 3), it is flagged as an anomaly (a stuck sensor, a spike, a dropped value). It needs `O(1)` memory, no sample buffer, and is numerically stable over long runs. For a stationary signal, this is the baseline for “what is normal”.
 
 ## Fixed-Point (Q16.16)
+
+`stats/include/stats/ewma_fixed.hpp`, header-only
+
+Integer-only exponentially weighted moving average, no `float`/`double`.
+Smooths a noisy signal with one output per input sample.
+
+$$y_n = y_{n-1} + \alpha \, (x_n - y_{n-1})$$
+
+- Values and alpha are Q16.16 (`int32_t`, LSB = 2^-16, range ±32768).
+- alpha in [0, 1.0] (`0 .. 65536`); alpha = 0.25 -> `16384`. Out-of-range values are clamped.
+- The product is computed in `int64_t`, rounded half up (+0.5 LSB before `>> 16`).
+- No overflow: with alpha in [0, 1] the result always lies between `y` and `x`.
+- The first sample initializes the state (`y = x`).
+- Error vs. the double version is bounded by about 0.5/alpha LSB (see `ewma_fixed_test.cpp`).
+
+Smoothing a noisy temperature or RSSI reading on a node without an FPU
+(e.g. Cortex-M0/M3, STM32F407 without float use in the ISR path).
+Small alpha -> smooth but slow; large alpha -> fast but noisy.
+Use it as the filtered value for display or control; use Welford (not EWMA)
+if you need mean/stddev for anomaly detection.
 
 ## Benchmark results
