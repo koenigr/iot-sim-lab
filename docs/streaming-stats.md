@@ -46,6 +46,26 @@ for (float value : rb) { /* 2, 3, 4 */ }
 
 ## Welford and numerical stability
 
+Computes mean and variance one sample at a time in O(1) memory, without storing samples.
+
+State: `n`, `mean`, `m2` (sum of squared deviations from the current mean).
+
+Per sample `x`:
+```
+  n     += 1
+  delta = x - mean
+  mean  += delta / n
+  m2    += delta * (x - mean)
+```
+
+Results: `mean`, sample variance `m2 / (n - 1)`, population variance `m2 / n`.
+
+Why not `E[x²] − E[x]²`: it subtracts two large, nearly equal numbers and loses precision to cancellation (e.g. data around 1e9). Welford only works with small deltas and stays numerically stable.
+
+Edge cases: sample variance is NaN for `n < 2`.
+
+Code: `stats/include/stats/welford.hpp`, tests: `stats/tests/test_welford.cpp`
+
 ## Fixed-Point (Q16.16)
 
 ## Benchmark results
