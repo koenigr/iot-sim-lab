@@ -9,7 +9,7 @@ FILES := $(shell find . -type f \( -name "*.cpp" -o -name "*.hpp" \))
 .DEFAULT_GOAL := help
 .PHONY: help configure build test tests format clean \
         broker-up broker-down broker-stop broker-sub broker-pub \
-        bench-build bench tabs
+        bench-build bench tabs smoke
 
 help:  ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | \
@@ -58,3 +58,26 @@ tabs:
 	@for f in $(FILES); do \
 		unexpand --first-only -t 4 "$$f" > "$$f.tmp" && mv "$$f.tmp" "$$f"; \
 	done
+
+smoke:  ## Smoke-test all important targets (build, test, bench, broker round-trip)
+	@set -e; \
+	trap '$(MAKE) --no-print-directory broker-down' EXIT; \
+	echo "==> clean + build + test"; \
+	$(MAKE) --no-print-directory clean; \
+	$(MAKE) --no-print-directory test; \
+	echo "==> format"; \
+	$(MAKE) --no-print-directory format; \
+	echo "==> bench"; \
+	$(MAKE) --no-print-directory bench; \
+	echo "==> broker round-trip"; \
+	$(MAKE) --no-print-directory broker-up; \
+	sleep 2; \
+	out=$$(mktemp); \
+	mosquitto_sub -h localhost -t $(TOPIC) -C 1 -W 5 > $$out & sub=$$!; \
+	sleep 1; \
+	$(MAKE) --no-print-directory broker-pub MSG=smoke-ok; \
+	wait $$sub; \
+	grep -q smoke-ok $$out; \
+	rm -f $$out; \
+	$(MAKE) --no-print-directory broker-stop; \
+	echo "==> smoke OK"

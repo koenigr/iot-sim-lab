@@ -2,6 +2,23 @@
 
 Hardware-free C++/IoT practice project: simulated sensor nodes publish data via MQTT to a collector.
 
+## Requirements
+
+| Tool | Needed for | Install (Debian/Ubuntu) |
+|------|------------|-------------------------|
+| C++ compiler (C++17 or newer), `make` | build | `sudo apt install build-essential` |
+| CMake | build, tests, benchmarks | `sudo apt install cmake` |
+| Docker + Compose v2 | Mosquitto broker (`make broker-*`) | `sudo apt install docker.io docker-compose-v2` |
+| `mosquitto-clients` | `broker-sub`, `broker-pub`, `make smoke` | `sudo apt install mosquitto-clients` |
+| `clang-format` | `make format` | `sudo apt install clang-format` |
+| `pre-commit` | commit hooks | `pip install pre-commit` |
+
+GoogleTest and Google Benchmark are used for tests and benchmarks (see `CMakeLists.txt` for how they are fetched).
+
+Add your user to the `docker` group to run Docker without `sudo`:
+
+    sudo usermod -aG docker $USER
+
 ## Structure
 
 - `sensor-node/`: simulated sensor node and data generator (noisy value, noise-free `truth`, `is_anomaly` flag, fixed seed)
