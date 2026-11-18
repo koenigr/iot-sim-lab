@@ -37,7 +37,9 @@ TEST(EwmaTest, ConvergesTowardStep) {
 	Ewma<double> f(0.2);
 	f.update(0.0);
 	double y = 0.0;
-	for (int i = 0; i < 100; ++i) y = f.update(10.0);
+	for (int i = 0; i < 100; ++i) {
+		y = f.update(10.0);
+	}
 	EXPECT_NEAR(y, 10.0, 1e-6);
 }
 

@@ -22,8 +22,10 @@ TEST(EwmaFixed, MatchesSnippetForAlphaQuarter) {
 }
 
 TEST(EwmaFixed, AlphaZeroHoldsAlphaOneFollows) {
-	EwmaFixed hold{0}, follow{EwmaFixed::kOne};
-	hold.update(100); follow.update(100);
+	EwmaFixed hold{0};
+	EwmaFixed follow{EwmaFixed::kOne};
+	hold.update(100);
+	follow.update(100);
 	EXPECT_EQ(hold.update(5000), 100);
 	EXPECT_EQ(follow.update(5000), 5000);
 }
@@ -47,8 +49,11 @@ TEST(EwmaFixed, ConvergesToConstantInput) {
 	EwmaFixed f{16384};
 	f.update(0);
 	const int32_t target = EwmaFixed::to_fixed(-12.25);
-	for (int i = 0; i < 200; ++i) f.update(target);
-	EXPECT_LE(std::abs(f.value() - target), 2);  // rounding dead-band ~ 0.5/alpha LSB
+	for (int i = 0; i < 200; ++i) {
+		f.update(target);
+	}
+	EXPECT_LE(std::abs(f.value() - target),
+	          2); // rounding dead-band ~ 0.5/alpha LSB
 }
 
 TEST(EwmaFixed, ErrorVsDoubleIsBounded) {
@@ -59,21 +64,24 @@ TEST(EwmaFixed, ErrorVsDoubleIsBounded) {
 		bool first = true;
 		double max_err = 0.0;
 
-		std::mt19937 rng{42};
+		std::mt19937 rng{42}; // NOLINT(bugprone-random-generator-seed): fixed
+		                      // seed for reproducibility
 		std::uniform_real_distribution<double> dist(-1000.0, 1000.0);
 		for (int i = 0; i < 100000; ++i) {
 			const int32_t xq = EwmaFixed::to_fixed(dist(rng));
-			const double  x  = EwmaFixed::to_double(xq);  // same quantized input
-			ref = first ? x : ref + alpha * (x - ref);
+			const double x = EwmaFixed::to_double(xq); // same quantized input
+			ref = first ? x : ref + (alpha * (x - ref));
 			first = false;
 			const double y = EwmaFixed::to_double(fixed.update(xq));
 			max_err = std::max(max_err, std::abs(y - ref));
 		}
 		// Per-step rounding error <= 0.5 LSB; the filter contracts it,
 		// so the steady-state bound is 0.5/alpha LSB (+1 LSB slack).
-		const double lsb   = 1.0 / EwmaFixed::kOne;
-		const double bound = (0.5 / alpha + 1.0) * lsb;
-		EXPECT_LE(max_err, bound) << "alpha=" << alpha << " max_err=" << max_err;
-		RecordProperty("max_abs_err_alpha_" + std::to_string(alpha_q), std::to_string(max_err));
+		const double lsb = 1.0 / EwmaFixed::kOne;
+		const double bound = ((0.5 / alpha) + 1.0) * lsb;
+		EXPECT_LE(max_err, bound)
+		    << "alpha=" << alpha << " max_err=" << max_err;
+		RecordProperty("max_abs_err_alpha_" + std::to_string(alpha_q),
+		               std::to_string(max_err));
 	}
 }

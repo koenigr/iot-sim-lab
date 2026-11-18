@@ -38,8 +38,8 @@ TEST(MedianFilter, LargerWindowRemovesTwoSpikes) {
 	for (int v : {1, 2, 3, 4}) {
 		EXPECT_FALSE(m.push(v).has_value());
 	}
-	EXPECT_EQ(*m.push(100), 3);  // {1,2,3,4,100}
-	EXPECT_EQ(*m.push(100), 4);  // {2,3,4,100,100}
+	EXPECT_EQ(*m.push(100), 3); // {1,2,3,4,100}
+	EXPECT_EQ(*m.push(100), 4); // {2,3,4,100,100}
 }
 
 TEST(MedianFilter, ConstantInputStaysConstant) {
@@ -68,7 +68,7 @@ TEST(MedianFilter, ResetClearsWindow) {
 	EXPECT_EQ(m.size(), 0u);
 	EXPECT_FALSE(m.push(100).has_value());
 	EXPECT_FALSE(m.push(100).has_value());
-	EXPECT_EQ(*m.push(5), 100);  // old samples must not leak through
+	EXPECT_EQ(*m.push(5), 100); // old samples must not leak through
 }
 
 TEST(MedianFilter, MatchesBruteForceAcrossWraparound) {
@@ -77,7 +77,7 @@ TEST(MedianFilter, MatchesBruteForceAcrossWraparound) {
 	std::vector<int> in;
 	unsigned x = 12345;
 	for (int i = 0; i < 200; ++i) {
-		x = x * 1103515245u + 12345u;  // deterministic pseudo-random
+		x = (x * 1103515245U) + 12345U; // deterministic pseudo-random
 		in.push_back(static_cast<int>((x >> 16) % 100));
 	}
 	for (std::size_t i = 0; i < in.size(); ++i) {

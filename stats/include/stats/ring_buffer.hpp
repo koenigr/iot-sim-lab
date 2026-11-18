@@ -1,8 +1,8 @@
 /*
 
 Fixed-size ring buffer backed by std::array, no dynamic allocation.
-Supports push (overwrites oldest when full), operator[] in insertion order, size() and iteration.
-Where: stats/include/stats/ring_buffer.hpp
+Supports push (overwrites oldest when full), operator[] in insertion order,
+size() and iteration. Where: stats/include/stats/ring_buffer.hpp
 
 RingBuffer<float, 3> rb;
 rb.push(1); rb.push(2); rb.push(3); rb.push(4);
@@ -18,8 +18,7 @@ rb.push(1); rb.push(2); rb.push(3); rb.push(4);
 
 namespace stats {
 
-template <typename T, std::size_t N>
-class RingBuffer {
+template <typename T, std::size_t N> class RingBuffer {
 	static_assert(N > 0, "RingBuffer capacity must be > 0");
 
 public:
@@ -33,10 +32,16 @@ public:
 		using reference = const T&;
 
 		ConstIterator() = default;
-		ConstIterator(const RingBuffer* rb, std::size_t index) : rb_(rb), index_(index) {}
+		ConstIterator(const RingBuffer* rb, std::size_t index)
+		    : rb_(rb), index_(index) {
+		}
 
-		reference operator*() const { return (*rb_)[index_]; }
-		pointer operator->() const { return &(*rb_)[index_]; }
+		reference operator*() const {
+			return (*rb_)[index_];
+		}
+		pointer operator->() const {
+			return &(*rb_)[index_];
+		}
 
 		ConstIterator& operator++() {
 			++index_;
@@ -53,7 +58,9 @@ public:
 			return rb_ == other.rb_ && index_ == other.index_;
 		}
 
-		bool operator!=(const ConstIterator& other) const { return !(*this == other); }
+		bool operator!=(const ConstIterator& other) const {
+			return !(*this == other);
+		}
 
 	private:
 		const RingBuffer* rb_ = nullptr;
@@ -62,34 +69,51 @@ public:
 
 	// overwrite oldest element when buffer full
 	void push(const T& value) {
-		data_[head_] = value;     // write at the next free slot (or over the oldest)
-		head_ = (head_ + 1) % N;  // advance, wrap to 0 after N-1
+		data_[head_] =
+		    value; // write at the next free slot (or over the oldest)
+		head_ = (head_ + 1) % N; // advance, wrap to 0 after N-1
 		if (count_ < N) {
-			++count_;  // grow until full, then stay at N
+			++count_; // grow until full, then stay at N
 		}
 	}
 
 	// Index 0 = oldest element
-	T& operator[](std::size_t i) { return data_[(head_ + N - count_ + i) % N]; }
+	T& operator[](std::size_t i) {
+		return data_[(head_ + N - count_ + i) % N];
+	}
 
-	const T& operator[](std::size_t i) const { return data_[(head_ + N - count_ + i) % N]; }
+	const T& operator[](std::size_t i) const {
+		return data_[(head_ + N - count_ + i) % N];
+	}
 
-	std::size_t size() const { return count_; }
+	[[nodiscard]] std::size_t size() const {
+		return count_;
+	}
 
-	static constexpr std::size_t capacity() { return N; }
+	static constexpr std::size_t capacity() {
+		return N;
+	}
 
-	bool empty() const { return count_ == 0; }
+	[[nodiscard]] bool empty() const {
+		return count_ == 0;
+	}
 
-	bool full() const { return count_ == N; }
+	[[nodiscard]] bool full() const {
+		return count_ == N;
+	}
 
-	ConstIterator begin() const { return ConstIterator(this, 0); }
+	[[nodiscard]] ConstIterator begin() const {
+		return ConstIterator(this, 0);
+	}
 
-	ConstIterator end() const { return ConstIterator(this, count_); }
+	[[nodiscard]] ConstIterator end() const {
+		return ConstIterator(this, count_);
+	}
 
 private:
 	std::array<T, N> data_{};
-	std::size_t head_ = 0;   // Position for next push
-	std::size_t count_ = 0;  // actual number of elements(<= N)
+	std::size_t head_ = 0;  // Position for next push
+	std::size_t count_ = 0; // actual number of elements(<= N)
 };
 
-}  // namespace stats
+} // namespace stats

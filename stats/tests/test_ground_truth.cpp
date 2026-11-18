@@ -96,14 +96,15 @@ TEST(GroundTruth, DetectorPrecisionRecall) {
 		if (i < kWarmup) {
 			continue; // detector cannot flag yet
 		}
-		if (pred && s.is_anomaly)
+		if (pred && s.is_anomaly) {
 			++c.tp;
-		else if (pred)
+		} else if (pred) {
 			++c.fp;
-		else if (s.is_anomaly)
+		} else if (s.is_anomaly) {
 			++c.fn;
-		else
+		} else {
 			++c.tn;
+		}
 	}
 
 	std::cout << "TP=" << c.tp << " FP=" << c.fp << " FN=" << c.fn

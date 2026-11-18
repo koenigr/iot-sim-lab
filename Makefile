@@ -63,7 +63,7 @@ CLANG_TIDY_RUN ?= $(or $(shell command -v run-clang-tidy 2>/dev/null),$(shell co
 
 tidy:  ## Run clang-tidy on all sources
 	cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-	$(CLANG_TIDY_RUN) -p build -quiet -header-filter='.*/(sensor-node|stats|collector)/.*'
+	$(CLANG_TIDY_RUN) -p build -quiet '.*/iot-sim-lab/(sensor-node|stats|collector)/.*'
 
 smoke:  ## Smoke-test all important targets (build, test, bench, broker round-trip)
 	@set -e; \

@@ -6,12 +6,14 @@ Checks: >
   modernize-*,
   performance-*,
   readability-*,
+  -readability-identifier-length,
   -modernize-use-trailing-return-type,
   -readability-magic-numbers,
   -cppcoreguidelines-avoid-magic-numbers,
   -cppcoreguidelines-pro-bounds-pointer-arithmetic
-WarningsAsErrors: ''
-HeaderFilterRegex: '^(sensor-node|collector|stats)/'
+  -cppcoreguidelines-pro-bounds-avoid-unchecked-container-access
+WarningsAsErrors: '*'
+HeaderFilterRegex: '(sensor-node|collector|stats)/'
 CheckOptions:
-  - key: readability-identifier-length.MinimumVariableNameLength
-    value: 2
+  - key: readability-function-cognitive-complexity.IgnoreMacros
+    value: true
