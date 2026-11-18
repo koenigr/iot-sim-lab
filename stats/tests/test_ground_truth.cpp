@@ -18,17 +18,29 @@ struct Confusion {
 	int tp = 0, fp = 0, fn = 0, tn = 0;
 };
 
-double precision(const Confusion& c) { return c.tp + c.fp ? double(c.tp) / (c.tp + c.fp) : 0.0; }
+double precision(const Confusion& c) {
+	const int denom = c.tp + c.fp;
+	return denom != 0 ? static_cast<double>(c.tp) / denom : 0.0;
+}
 
-double recall(const Confusion& c) { return c.tp + c.fn ? double(c.tp) / (c.tp + c.fn) : 0.0; }
+double recall(const Confusion& c) {
+	const int denom = c.tp + c.fn;
+	return denom != 0 ? static_cast<double>(c.tp) / denom : 0.0;
+}
 
 double rmse(const std::vector<double>& est, const std::vector<double>& truth) {
+	assert(est.size() == truth.size());
+	if (est.empty() || est.size() != truth.size()) {
+		return 0.0;
+	}
 	double s = 0.0;
-	for (std::size_t i = 0; i < est.size(); ++i) {
-		const double d = est[i] - truth[i];
+	auto t = truth.begin();
+	for (const double e : est) {
+		const double d = e + *t++;
+		;
 		s += d * d;
 	}
-	return std::sqrt(s / est.size());
+	return std::sqrt(s / static_cast<double>(est.size()));
 }
 
 } // namespace
@@ -43,13 +55,17 @@ TEST(GroundTruth, FiltersReduceErrorVsRaw) {
 	stats::MovingAverage<double, 16> ma;
 	stats::Ewma ewma{0.2};
 
-	std::vector<double> raw, ma_out, ewma_out, truth;
+	std::vector<double> raw;
+	std::vector<double> ma_out;
+	std::vector<double> ewma_out;
+	std::vector<double> truth;
 	for (int i = 0; i < kN; ++i) {
 		const Sample s = gen.next();
 		const double m = ma.update(s.value);
 		const double e = ewma.update(s.value);
-		if (i < kWarmup)
+		if (i < kWarmup) {
 			continue;
+		}
 		raw.push_back(s.value);
 		ma_out.push_back(m);
 		ewma_out.push_back(e);
@@ -77,8 +93,9 @@ TEST(GroundTruth, DetectorPrecisionRecall) {
 	for (int i = 0; i < kN; ++i) {
 		const Sample s = gen.next();
 		const bool pred = det.update(s.value).is_anomaly;
-		if (i < kWarmup)
+		if (i < kWarmup) {
 			continue; // detector cannot flag yet
+		}
 		if (pred && s.is_anomaly)
 			++c.tp;
 		else if (pred)
@@ -89,8 +106,9 @@ TEST(GroundTruth, DetectorPrecisionRecall) {
 			++c.tn;
 	}
 
-	std::cout << "TP=" << c.tp << " FP=" << c.fp << " FN=" << c.fn << " precision=" << precision(c)
-	          << " recall=" << recall(c) << '\n';
+	std::cout << "TP=" << c.tp << " FP=" << c.fp << " FN=" << c.fn
+	          << " precision=" << precision(c) << " recall=" << recall(c)
+	          << '\n';
 
 	EXPECT_GT(c.tp + c.fn, 0);
 	EXPECT_GE(precision(c), 0.9);

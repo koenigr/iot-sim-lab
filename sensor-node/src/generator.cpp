@@ -5,7 +5,8 @@
 #include <iomanip>
 
 Generator::Generator(GeneratorConfig cfg)
-    : cfg_(cfg), rng_(cfg.seed), spike_mag_(cfg.spike_min, cfg.spike_max) {}
+    : cfg_(cfg), rng_(cfg.seed), spike_mag_(cfg.spike_min, cfg.spike_max) {
+}
 
 Sample Generator::next() {
 	constexpr double kTwoPi = 6.283185307179586;
@@ -29,9 +30,11 @@ Sample Generator::next() {
 	return Sample{cfg_.start_ts + step_++, value, truth, anomaly};
 }
 
-void write_csv_header(std::ostream& os) { os << "timestamp,value,truth,is_anomaly\n"; }
+void write_csv_header(std::ostream& os) {
+	os << "timestamp,value,truth,is_anomaly\n";
+}
 
 void write_csv_row(std::ostream& os, const Sample& s) {
-	os << s.timestamp << ',' << std::fixed << std::setprecision(2) << s.value << ',' << s.truth
-	   << ',' << (s.is_anomaly ? 1 : 0) << '\n';
+	os << s.timestamp << ',' << std::fixed << std::setprecision(2) << s.value
+	   << ',' << s.truth << ',' << (s.is_anomaly ? 1 : 0) << '\n';
 }

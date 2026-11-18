@@ -9,7 +9,7 @@ FILES := $(shell find . -type f \( -name "*.cpp" -o -name "*.hpp" \))
 .DEFAULT_GOAL := help
 .PHONY: help configure build test tests format clean \
         broker-up broker-down broker-stop broker-sub broker-pub \
-        bench-build bench tabs smoke
+        bench-build bench tabs smoke tidy
 
 help:  ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | \
@@ -59,12 +59,20 @@ tabs:
 		unexpand --first-only -t 4 "$$f" > "$$f.tmp" && mv "$$f.tmp" "$$f"; \
 	done
 
+CLANG_TIDY_RUN ?= $(or $(shell command -v run-clang-tidy 2>/dev/null),$(shell command -v run-clang-tidy-18 2>/dev/null))
+
+tidy:  ## Run clang-tidy on all sources
+	cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+	$(CLANG_TIDY_RUN) -p build -quiet -header-filter='.*/(sensor-node|stats|collector)/.*'
+
 smoke:  ## Smoke-test all important targets (build, test, bench, broker round-trip)
 	@set -e; \
 	trap '$(MAKE) --no-print-directory broker-down' EXIT; \
 	echo "==> clean + build + test"; \
 	$(MAKE) --no-print-directory clean; \
 	$(MAKE) --no-print-directory test; \
+	echo "==> format"; \
+	$(MAKE) --no-print-directory tidy; \
 	echo "==> format"; \
 	$(MAKE) --no-print-directory format; \
 	echo "==> bench"; \
