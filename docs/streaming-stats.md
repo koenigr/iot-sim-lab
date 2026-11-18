@@ -50,7 +50,7 @@ $$y_n = y_{n-1} + \alpha \, (x_n - y_{n-1})$$
 
 Middle value of the sorted last `N` values. Implausible outliers are ignored completely, sharp edges in the signal are preserved, short spikes are removed. Stores all `N` values.
 
-$$y_n = \operatorname{median}(x_{n-N+1}, \dots, x_n)$$
+$$y_n = \text{median}(x_{n-N+1}, \dots, x_n)$$
 
 - Removing completely implausible outliers (ultrasonic sensors, image processing).
 
