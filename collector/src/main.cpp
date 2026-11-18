@@ -1,6 +1,6 @@
 #include <iostream>
 
 int main() {
-    std::cout << "collector\n";
-    return 0;
+	std::cout << "collector\n";
+	return 0;
 }

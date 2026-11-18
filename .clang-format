@@ -1,5 +1,9 @@
-BasedOnStyle: Google
+BasedOnStyle: LLVM
 IndentWidth: 4
+TabWidth: 4
+UseTab: ForIndentation
 ColumnLimit: 100
 AccessModifierOffset: -4
-SortIncludes: true
+PointerAlignment: Left
+IndentCaseLabels: true
+SortIncludes: CaseSensitive
