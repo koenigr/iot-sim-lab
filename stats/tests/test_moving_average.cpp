@@ -16,8 +16,8 @@ TEST(MovingAverage, SlidesAfterWindowIsFull) {
 	ma.update(3);
 	ma.update(6);
 	ma.update(9);
-	EXPECT_FLOAT_EQ(ma.update(12), 9.0F);   // (6 + 9 + 12) / 3
-	EXPECT_FLOAT_EQ(ma.update(15), 12.0F);  // (9 + 12 + 15) / 3
+	EXPECT_FLOAT_EQ(ma.update(12), 9.0F);  // (6 + 9 + 12) / 3
+	EXPECT_FLOAT_EQ(ma.update(15), 12.0F); // (9 + 12 + 15) / 3
 }
 
 TEST(MovingAverage, EmptyReturnsZero) {
