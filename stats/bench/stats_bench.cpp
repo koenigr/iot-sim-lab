@@ -22,8 +22,8 @@ const std::array<float, kMask + 1>& inputs() {
 		std::array<float, kMask + 1> v{};
 		unsigned x = 12345;
 		for (auto& e : v) {
-			x = x * 1664525U + 1013904223U;
-			e = 20.0f + float(x >> 16) / 65536.0f;
+			x = (x * 1664525U) + 1013904223U;
+			e = 20.0F + (static_cast<float>(x >> 16) / 65536.0F);
 		}
 		return v;
 	}();
@@ -35,7 +35,7 @@ const std::array<std::int32_t, kMask + 1>& inputs_q16() {
 		std::array<std::int32_t, kMask + 1> v{};
 		const auto& f = inputs();
 		for (std::size_t i = 0; i < v.size(); ++i) {
-			v[i] = static_cast<std::int32_t>(f[i] * 65536.0f);
+			v[i] = static_cast<std::int32_t>(f[i] * 65536.0F);
 		}
 		return v;
 	}();
@@ -45,11 +45,12 @@ const std::array<std::int32_t, kMask + 1>& inputs_q16() {
 } // namespace
 
 static void BM_EwmaFloat(benchmark::State& s) {
-	stats::Ewma<float> f(0.25f);
+	stats::Ewma<float> f(0.25F);
 	const auto& in = inputs();
 	std::size_t i = 0;
-	for (auto _ : s)
+	for (auto _ : s) {
 		benchmark::DoNotOptimize(f.update(in[i++ & kMask]));
+	}
 	s.SetItemsProcessed(s.iterations());
 }
 BENCHMARK(BM_EwmaFloat);
