@@ -66,6 +66,7 @@ tidy:  ## Run clang-tidy on all sources
 	$(CLANG_TIDY_RUN) -p build -quiet '.*/iot-sim-lab/(sensor-node|stats|collector)/.*'
 
 tidy-changed:  ## clang-tidy on files changed vs. main
+	cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 	git diff --name-only --diff-filter=d main -- '*.cpp' | xargs -r clang-tidy-18 -p build -quiet
 
 smoke:  ## Smoke-test all important targets (build, test, bench, broker round-trip)

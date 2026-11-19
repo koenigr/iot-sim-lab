@@ -16,10 +16,3 @@ repos:
     hooks:
       - id: clang-format
         types_or: [c++, c]
-  - repo: local
-    hooks:
-      - id: clang-tidy
-        name: clang-tidy
-        entry: clang-tidy-18 -p build -quiet
-        language: system
-        files: ^(sensor-node|stats|collector)/.*\.cpp$

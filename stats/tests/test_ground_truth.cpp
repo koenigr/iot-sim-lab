@@ -36,7 +36,7 @@ double rmse(const std::vector<double>& est, const std::vector<double>& truth) {
 	double s = 0.0;
 	auto t = truth.begin();
 	for (const double e : est) {
-		const double d = e + *t++;
+		const double d = e - *t++;
 		;
 		s += d * d;
 	}
