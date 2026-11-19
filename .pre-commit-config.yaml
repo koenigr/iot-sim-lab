@@ -6,6 +6,9 @@ repos:
         args: [--markdown-linebreak-ext=md]
       - id: end-of-file-fixer
       - id: check-yaml
+        name: check-yaml (tool configs)
+        files: ^(\.clang-tidy|\.clangd|.*/\.clang-tidy)$
+        types: [file]
       - id: check-added-large-files
       - id: mixed-line-ending
   - repo: https://github.com/pre-commit/mirrors-clang-format
@@ -13,3 +16,10 @@ repos:
     hooks:
       - id: clang-format
         types_or: [c++, c]
+  - repo: local
+    hooks:
+      - id: clang-tidy
+        name: clang-tidy
+        entry: clang-tidy-18 -p build -quiet
+        language: system
+        files: ^(sensor-node|stats|collector)/.*\.cpp$
