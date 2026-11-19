@@ -10,15 +10,15 @@ Generator::Generator(GeneratorConfig cfg)
 
 Sample Generator::next() {
 	constexpr double kTwoPi = 6.283185307179586;
-	const double t = static_cast<double>(step_);
+	const auto t = static_cast<double>(step_);
 
 	// noise-free reference
-	double truth = cfg_.base + cfg_.drift * t;
+	double truth = cfg_.base + (cfg_.drift * t);
 	if (cfg_.amplitude != 0.0) {
 		truth += cfg_.amplitude * std::sin(kTwoPi * t / cfg_.period);
 	}
 
-	double value = truth + cfg_.noise_sigma * noise_(rng_);
+	double value = truth + (cfg_.noise_sigma * noise_(rng_));
 
 	bool anomaly = false;
 	if (unit_(rng_) < cfg_.anomaly_rate) {
@@ -27,7 +27,10 @@ Sample Generator::next() {
 		anomaly = true;
 	}
 
-	return Sample{cfg_.start_ts + step_++, value, truth, anomaly};
+	return Sample{.timestamp = cfg_.start_ts + step_++,
+	              .value = value,
+	              .truth = truth,
+	              .is_anomaly = anomaly};
 }
 
 void write_csv_header(std::ostream& os) {
