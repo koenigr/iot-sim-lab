@@ -59,8 +59,9 @@ static void BM_MovingAverage16(benchmark::State& s) {
 	stats::MovingAverage<float, 16> f;
 	const auto& in = inputs();
 	std::size_t i = 0;
-	for (auto _ : s)
+	for (auto _ : s) {
 		benchmark::DoNotOptimize(f.update(in[i++ & kMask]));
+	}
 	s.SetItemsProcessed(s.iterations());
 }
 BENCHMARK(BM_MovingAverage16);
@@ -69,8 +70,9 @@ static void BM_ZScoreDetector(benchmark::State& s) {
 	stats::ZScoreDetector d;
 	const auto& in = inputs();
 	std::size_t i = 0;
-	for (auto _ : s)
+	for (auto _ : s) {
 		benchmark::DoNotOptimize(d.update(in[i++ & kMask]));
+	}
 	s.SetItemsProcessed(s.iterations());
 }
 BENCHMARK(BM_ZScoreDetector);
@@ -79,8 +81,9 @@ static void BM_EwmaFixed(benchmark::State& s) {
 	stats::EwmaFixed f; // alpha = 0.25 (Q16), same as the float benchmark
 	const auto& in = inputs_q16();
 	std::size_t i = 0;
-	for (auto _ : s)
+	for (auto _ : s) {
 		benchmark::DoNotOptimize(f.update(in[i++ & kMask]));
+	}
 	s.SetItemsProcessed(s.iterations());
 }
 BENCHMARK(BM_EwmaFixed);
@@ -89,8 +92,9 @@ static void BM_MedianFilter5(benchmark::State& s) {
 	stats::MedianFilter<float, 5> f;
 	const auto& in = inputs();
 	std::size_t i = 0;
-	for (auto _ : s)
+	for (auto _ : s) {
 		benchmark::DoNotOptimize(f.push(in[i++ & kMask]));
+	}
 	s.SetItemsProcessed(s.iterations());
 }
 BENCHMARK(BM_MedianFilter5);

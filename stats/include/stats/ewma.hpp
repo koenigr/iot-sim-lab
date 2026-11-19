@@ -17,12 +17,14 @@ public:
 		return y_;
 	}
 
-	T value() const {
+	[[nodiscard]] T value() const {
 		return y_;
 	}
+
 	[[nodiscard]] bool initialized() const {
 		return initialized_;
 	}
+
 	void reset() {
 		initialized_ = false;
 		y_ = T{};

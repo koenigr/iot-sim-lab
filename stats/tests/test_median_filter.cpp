@@ -23,14 +23,14 @@ TEST(MedianFilter, RemovesSingleSampleSpike) {
 	MedianFilter<float, 3> m;
 	m.push(10.F);
 	m.push(11.F);
-	EXPECT_FLOAT_EQ(*m.push(90.F), 11.F);
-	EXPECT_FLOAT_EQ(*m.push(12.F), 12.F);
+	EXPECT_FLOAT_EQ(m.push(90.F).value(), 11.F);
+	EXPECT_FLOAT_EQ(m.push(12.F).value(), 12.F);
 }
 
 TEST(MedianFilter, WindowOfOneIsPassThrough) {
 	MedianFilter<int, 1> m;
-	EXPECT_EQ(*m.push(5), 5);
-	EXPECT_EQ(*m.push(-7), -7);
+	EXPECT_EQ(m.push(5).value(), 5);
+	EXPECT_EQ(m.push(-7).value(), -7);
 }
 
 TEST(MedianFilter, LargerWindowRemovesTwoSpikes) {
@@ -38,8 +38,8 @@ TEST(MedianFilter, LargerWindowRemovesTwoSpikes) {
 	for (int v : {1, 2, 3, 4}) {
 		EXPECT_FALSE(m.push(v).has_value());
 	}
-	EXPECT_EQ(*m.push(100), 3); // {1,2,3,4,100}
-	EXPECT_EQ(*m.push(100), 4); // {2,3,4,100,100}
+	EXPECT_EQ(m.push(100).value(), 3); // {1,2,3,4,100}
+	EXPECT_EQ(m.push(100).value(), 4); // {2,3,4,100,100}
 }
 
 TEST(MedianFilter, ConstantInputStaysConstant) {
@@ -48,15 +48,15 @@ TEST(MedianFilter, ConstantInputStaysConstant) {
 	for (int i = 0; i < 20; ++i) {
 		out = m.push(3.5);
 	}
-	EXPECT_DOUBLE_EQ(*out, 3.5);
+	EXPECT_DOUBLE_EQ(out.value(), 3.5);
 }
 
 TEST(MedianFilter, HandlesNegativeAndMonotonicInput) {
 	MedianFilter<int, 3> m;
 	m.push(-1);
 	m.push(-2);
-	EXPECT_EQ(*m.push(-3), -2);
-	EXPECT_EQ(*m.push(-4), -3);
+	EXPECT_EQ(m.push(-3).value(), -2);
+	EXPECT_EQ(m.push(-4).value(), -3);
 }
 
 TEST(MedianFilter, ResetClearsWindow) {
@@ -68,7 +68,9 @@ TEST(MedianFilter, ResetClearsWindow) {
 	EXPECT_EQ(m.size(), 0u);
 	EXPECT_FALSE(m.push(100).has_value());
 	EXPECT_FALSE(m.push(100).has_value());
-	EXPECT_EQ(*m.push(5), 100); // old samples must not leak through
+	const auto out = m.push(5);
+	ASSERT_TRUE(out.has_value());
+	EXPECT_EQ(out.value(), 100); // old samples must not leak through
 }
 
 TEST(MedianFilter, MatchesBruteForceAcrossWraparound) {
@@ -87,9 +89,11 @@ TEST(MedianFilter, MatchesBruteForceAcrossWraparound) {
 			continue;
 		}
 		std::array<int, W> win{};
-		std::copy(in.begin() + (i + 1 - W), in.begin() + (i + 1), win.begin());
+		const auto lo = static_cast<std::ptrdiff_t>(i + 1 - W);
+		const auto hi = static_cast<std::ptrdiff_t>(i + 1);
+		std::copy(in.begin() + lo, in.begin() + hi, win.begin());
 		std::sort(win.begin(), win.end());
 		ASSERT_TRUE(out.has_value());
-		EXPECT_EQ(*out, win[W / 2]) << "at i=" << i;
+		EXPECT_EQ(out.value(), win[W / 2]) << "at i=" << i;
 	}
 }

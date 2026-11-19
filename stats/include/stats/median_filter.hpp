@@ -40,7 +40,7 @@ public:
 	}
 
 private:
-	T median() const {
+	[[nodiscard]] T median() const {
 		std::array<T, N> tmp = buf_; // order inside the window is irrelevant
 		auto mid = tmp.begin() + (N / 2);
 		std::nth_element(tmp.begin(), mid, tmp.end());

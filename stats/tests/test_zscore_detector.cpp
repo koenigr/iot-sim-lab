@@ -9,13 +9,17 @@ using stats::ZScoreDetector;
 namespace {
 
 // Alternating 19/21 -> mean 20, population stddev 1.
-ZScoreDetector warmed_up(ZScoreDetector::Config cfg = {3.0, 10, false}) {
+ZScoreDetector
+warmed_up(ZScoreDetector::Config cfg = {
+              .threshold = 3.0, .min_samples = 10, .feed_anomalies = false}) {
 	ZScoreDetector d(cfg);
-	for (int i = 0; i < 100; ++i) d.update(i % 2 == 0 ? 19.0 : 21.0);
+	for (int i = 0; i < 100; ++i) {
+		d.update(i % 2 == 0 ? 19.0 : 21.0);
+	}
 	return d;
 }
 
-}  // namespace
+} // namespace
 
 TEST(ZScoreDetector, IssueExample) {
 	auto d = warmed_up();
@@ -42,8 +46,9 @@ TEST(ZScoreDetector, NegativeDeviationIsAnomaly) {
 }
 
 TEST(ZScoreDetector, ThresholdIsConfigurable) {
-	auto d = warmed_up({10.0, 10, false});
-	EXPECT_FALSE(d.update(26.0).is_anomaly);  // z = 6 < 10
+	auto d = warmed_up(
+	    {.threshold = 10.0, .min_samples = 10, .feed_anomalies = false});
+	EXPECT_FALSE(d.update(26.0).is_anomaly); // z = 6 < 10
 }
 
 TEST(ZScoreDetector, AnomalyIsNotFedByDefault) {
@@ -56,7 +61,8 @@ TEST(ZScoreDetector, AnomalyIsNotFedByDefault) {
 }
 
 TEST(ZScoreDetector, AnomalyIsFedWhenConfigured) {
-	auto d = warmed_up({3.0, 10, true});
+	auto d = warmed_up(
+	    {.threshold = 3.0, .min_samples = 10, .feed_anomalies = true});
 	const auto n = d.count();
 	d.update(26.0);
 	EXPECT_EQ(d.count(), n + 1);
@@ -64,7 +70,8 @@ TEST(ZScoreDetector, AnomalyIsFedWhenConfigured) {
 }
 
 TEST(ZScoreDetector, WarmUpNeverFlagsAndAlwaysFeeds) {
-	ZScoreDetector d({3.0, 10, false});
+	ZScoreDetector d(
+	    {.threshold = 3.0, .min_samples = 10, .feed_anomalies = false});
 	for (int i = 0; i < 9; ++i) {
 		EXPECT_FALSE(d.update(i * 100.0).is_anomaly);
 	}
@@ -72,7 +79,8 @@ TEST(ZScoreDetector, WarmUpNeverFlagsAndAlwaysFeeds) {
 }
 
 TEST(ZScoreDetector, ZeroStddev) {
-	ZScoreDetector d({3.0, 2, false});
+	ZScoreDetector d(
+	    {.threshold = 3.0, .min_samples = 2, .feed_anomalies = false});
 	d.update(5.0);
 	d.update(5.0);
 	EXPECT_DOUBLE_EQ(d.update(5.0).z, 0.0);

@@ -1,4 +1,4 @@
 CompilationDatabase: build
 Diagnostics:
   ClangTidy:
-    # empty: use the checks from .clang-tidy
+    Remove: ["*"]

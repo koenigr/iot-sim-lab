@@ -8,9 +8,11 @@
 #include "generator.hpp"
 
 TEST(Generator, SameSeedGivesSameSequence) {
-	Generator a{GeneratorConfig{}}, b{GeneratorConfig{}};
+	Generator a{GeneratorConfig{}};
+	Generator b{GeneratorConfig{}};
 	for (int i = 0; i < 100; ++i) {
-		const Sample x = a.next(), y = b.next();
+		const Sample x = a.next();
+		const Sample y = b.next();
 		EXPECT_EQ(x.timestamp, y.timestamp);
 		EXPECT_DOUBLE_EQ(x.value, y.value);
 		EXPECT_DOUBLE_EQ(x.truth, y.truth);
@@ -34,7 +36,7 @@ TEST(Generator, TruthIsNoiseFree) {
 	cfg.amplitude = 0.0;
 	Generator gen{cfg};
 	for (int i = 0; i < 50; ++i) {
-		EXPECT_NEAR(gen.next().truth, 20.0 + 0.1 * i, 1e-9);
+		EXPECT_NEAR(gen.next().truth, 20.0 + (0.1 * i), 1e-9);
 	}
 }
 
@@ -63,15 +65,22 @@ TEST(Generator, ZeroAnomalyRateGivesNoAnomalies) {
 	GeneratorConfig cfg;
 	cfg.anomaly_rate = 0.0;
 	Generator gen{cfg};
-	for (int i = 0; i < 1000; ++i)
+	for (int i = 0; i < 1000; ++i) {
 		EXPECT_FALSE(gen.next().is_anomaly);
+	}
 }
 
 TEST(GeneratorCsv, HeaderAndRowFormat) {
 	std::ostringstream os;
 	write_csv_header(os);
-	write_csv_row(os, Sample{1000, 21.4, 20.0, false});
-	write_csv_row(os, Sample{1001, 45.0, 20.1, true});
+	write_csv_row(os, Sample{.timestamp = 1000,
+	                         .value = 21.4,
+	                         .truth = 20.0,
+	                         .is_anomaly = false});
+	write_csv_row(os, Sample{.timestamp = 1001,
+	                         .value = 45.0,
+	                         .truth = 20.1,
+	                         .is_anomaly = true});
 	EXPECT_EQ(os.str(), "timestamp,value,truth,is_anomaly\n"
 	                    "1000,21.40,20.00,0\n"
 	                    "1001,45.00,20.10,1\n");

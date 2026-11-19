@@ -17,12 +17,12 @@ double naive_variance(const std::vector<double>& xs) {
 		s += x;
 		s2 += x * x;
 	}
-	const double n = static_cast<double>(xs.size());
+	const auto n = static_cast<double>(xs.size());
 	const double mean = s / n;
-	return (s2 / n - mean * mean) * n / (n - 1.0);
+	return ((s2 / n) - (mean * mean)) * n / (n - 1.0);
 }
 
-}  // namespace
+} // namespace
 
 TEST(Welford, EmptyHasZeroCountAndNaNVariance) {
 	Welford w;

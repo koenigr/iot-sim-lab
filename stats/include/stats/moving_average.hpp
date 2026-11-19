@@ -30,7 +30,7 @@ public:
 	}
 
 	// Current average; 0 if no sample has been received yet.
-	T value() const {
+	[[nodiscard]] T value() const {
 		return buffer_.empty() ? T{0} : sum_ / static_cast<T>(buffer_.size());
 	}
 

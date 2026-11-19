@@ -1,2 +1,4 @@
 InheritParentConfig: true
-Checks: '-readability-identifier-length,-readability-uppercase-literal-suffix'
+Checks: >
+  -readability-identifier-length,-readability-uppercase-literal-suffix,
+  -bugprone-unchecked-optional-access
