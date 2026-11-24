@@ -37,7 +37,7 @@ Status: `<site>/<area>/<node>/status`
 | unit  | string | Unit of `value` (`C`, `%`, `hPa`, ...)             |
 | seq   | int    | Per-sensor counter, +1 per message, resets on boot |
 
-QoS 0, not retained.
+QoS 0, not retained (only current subscribers get the message).
 
 ## Examples
 
