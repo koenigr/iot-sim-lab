@@ -5,7 +5,7 @@ Specify site/area/node/sensor/metric and the JSON payload (ts, value, unit, seq)
 
 ## Topic structure
 
-Data:   `<site>/<area>/<node>/<sensor>/<metric>`
+Data:   `<site>/<area>/<node>/<sensor>/<metric>`  
 Status: `<site>/<area>/<node>/status`
 
 | Level  | Meaning                 | Example   |
