@@ -74,15 +74,15 @@ Names are invented but kept consistent. One node per simulated device.
 
 | Level  | Value                          |
 |--------|--------------------------------|
-| site   | `sim` (or `home`, `lab`)       |
-| area   | `desk` (or `lab`)              |
+| site   | `sim`     |
+| area   | `lab`             |
 | node   | `sim01`, `sim02`, ...          |
-| sensor | `bme280` (or `fake-temp`)      |
+| sensor | `fake-temp`   |
 | metric | `temp`, `humidity`, `pressure` |
 
 ```
-sim/desk/sim01/bme280/temp
-sim/desk/sim01/status
+sim/lab/sim01/fake-temp/temp
+sim/lab/sim01/status
 ```
 
 - With multiple containers, set a unique node name via env var (`NODE_ID=sim01`, `sim02`) so topics and LWT stay unique.
