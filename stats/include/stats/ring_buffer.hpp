@@ -33,7 +33,7 @@ public:
 
 		ConstIterator() = default;
 		ConstIterator(const RingBuffer* rb, std::size_t index)
-		    : rb_(rb), index_(index) {
+			: rb_(rb), index_(index) {
 		}
 
 		reference operator*() const {
@@ -70,7 +70,7 @@ public:
 	// overwrite oldest element when buffer full
 	void push(const T& value) {
 		data_[head_] =
-		    value; // write at the next free slot (or over the oldest)
+			value; // write at the next free slot (or over the oldest)
 		head_ = (head_ + 1) % N; // advance, wrap to 0 after N-1
 		if (count_ < N) {
 			++count_; // grow until full, then stay at N

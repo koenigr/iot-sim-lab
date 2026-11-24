@@ -14,7 +14,7 @@ received so far (e.g. after 2 samples: (a + b) / 2), not over N.
 */
 template <typename T, std::size_t N> class MovingAverage {
 	static_assert(std::is_floating_point_v<T>,
-	              "MovingAverage requires a floating-point type");
+				  "MovingAverage requires a floating-point type");
 	static_assert(N > 0, "window size must be > 0");
 
 public:
@@ -22,7 +22,7 @@ public:
 	T update(T sample) {
 		if (buffer_.full()) {
 			sum_ -=
-			    *buffer_.begin(); // oldest sample is about to be overwritten
+				*buffer_.begin(); // oldest sample is about to be overwritten
 		}
 		buffer_.push(sample);
 		sum_ += sample;
