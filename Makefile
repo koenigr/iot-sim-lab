@@ -1,13 +1,13 @@
 BUILD_DIR ?= build
 COMPOSE   := docker compose -f deploy/docker-compose.yml
-TOPIC     ?= test/topic
+TOPIC     ?= lab/#
 MSG       ?= hello
 BENCH_DIR := build-rel
 
 FILES := $(shell find . -type f \( -name "*.cpp" -o -name "*.hpp" \))
 
 .DEFAULT_GOAL := help
-.PHONY: help configure build test tests format clean \
+.PHONY: help configure build sensor-node test tests format clean \
         broker-up broker-down broker-stop broker-sub broker-pub \
         bench-build bench tabs smoke tidy
 
@@ -16,10 +16,15 @@ help:  ## Show this help
 		awk 'BEGIN {FS = ":.*?## "}; {printf "  %-14s %s\n", $$1, $$2}'
 
 configure:  ## Configure CMake
-	cmake -B $(BUILD_DIR)
+	cmake -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=Release
 
 build: configure  ## Build everything
 	cmake --build $(BUILD_DIR)
+
+sensor-node: configure
+	cmake --build $(BUILD_DIR) --target sensor-node
+	MQTT_URI=tcp://localhost:1883 ./$(BUILD_DIR)/sensor-node/sensor-node
+
 
 test: build  ## Build and run tests
 	ctest --test-dir $(BUILD_DIR) --output-on-failure
@@ -42,7 +47,7 @@ broker-stop:  ## Stop broker, keep containers
 	$(COMPOSE) stop
 
 broker-sub:  ## Subscribe to TOPIC (default: test/topic)
-	mosquitto_sub -h localhost -t $(TOPIC)
+	mosquitto_sub -h localhost -t $(TOPIC) -v
 
 broker-pub:  ## Publish MSG to TOPIC
 	mosquitto_pub -h localhost -t $(TOPIC) -m "$(MSG)"
