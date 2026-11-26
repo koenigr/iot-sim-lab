@@ -26,6 +26,8 @@ public:
 	~Publisher();
 	Publisher(const Publisher&) = delete;
 	Publisher& operator=(const Publisher&) = delete;
+	Publisher(Publisher&&) = delete;
+	Publisher& operator=(Publisher&&) = delete;
 
 	void publish(const Sample& s);
 

@@ -2,27 +2,27 @@
 
 #include <chrono>
 #include <iomanip>
+#include <iostream>
 #include <sstream>
 
 std::string make_payload_v1(const Sample& s, std::uint64_t seq,
                             const std::string& unit) {
 	std::ostringstream os;
-	os << "{\"v\":1,\"ts\":" << s.timestamp << ",\"value\":" << std::fixed
-	   << std::setprecision(2) << s.value << ",\"unit\":\"" << unit
-	   << "\",\"seq\":" << seq << '}';
+	os << R"({"v":1,"ts":)" << s.timestamp << R"(,"value":)" << std::fixed
+	   << std::setprecision(2) << s.value << R"(,"unit":")" << unit
+	   << R"(","seq":)" << seq << '}';
 	return os.str();
 }
 
 Publisher::Publisher(PublisherConfig cfg)
     : cfg_(std::move(cfg)), client_(cfg_.broker_uri, cfg_.node) {
-	auto lwt = mqtt::message(status_topic(), "offline", cfg_.qos, true);
-
-	auto opts = mqtt::connect_options_builder()
-	                .clean_session()
-	                .keep_alive_interval(std::chrono::seconds(10))
-	                .automatic_reconnect(true)
-	                .will(std::move(lwt))
-	                .finalize();
+	auto opts =
+	    mqtt::connect_options_builder()
+	        .clean_session()
+	        .keep_alive_interval(std::chrono::seconds(10))
+	        .automatic_reconnect(true)
+	        .will(mqtt::message(status_topic(), "offline", cfg_.qos, true))
+	        .finalize();
 
 	client_.connect(opts);
 	client_.publish(
@@ -35,7 +35,8 @@ Publisher::~Publisher() {
 		client_.publish(
 		    mqtt::make_message(status_topic(), "offline", cfg_.qos, true));
 		client_.disconnect();
-	} catch (...) {
+	} catch (const mqtt::exception& e) {
+		std::cerr << "mqtt shutdown error: " << e.what() << '\n';
 	}
 }
 

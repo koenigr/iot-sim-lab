@@ -4,9 +4,9 @@ Guidance for coding agents working in `iot-sim-lab`.
 
 ## Project
 
-Hardware-free C++/IoT practice project that resembles embedded work: a simulated sensor node publishes data over MQTT, a collector processes it, and a dashboard shows the result. Everything runs without hardware (Docker, Mosquitto).
+Hardware-free C++/IoT practice project that resembles embedded work: a simulated sensor node publishes data over MQTT, a collector processes and stores it, and a dashboard shows the result. Everything runs without hardware (Docker, Mosquitto).
 
-Current scope: **Phase 2, streaming statistics** (`stats/`), fed by the data generator in `sensor-node/`.
+Current scope: **Phase 3, Collector + Storage + Dashboard** ([milestone](https://github.com/koenigr/iot-sim-lab/milestone/2)). The collector subscribes to the sensor-node topics (v1 payload, `seq`, node status via Last Will), the streaming statistics from Phase 2 (`stats/`) are its processing building blocks. Phase 2 is finished; its status table below is kept for reference.
 
 Rule for all docs, README and commit messages: **only claim what is provable in the repo** (code, test, benchmark, doc). No buzzwords without evidence.
 
