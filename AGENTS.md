@@ -23,7 +23,7 @@ stats/tests/                          GoogleTest, files named test_*.cpp
 stats/bench/stats_bench.cpp           Google Benchmark
 collector/src/                        C++ subscriber (later consumer of the detector)
 deploy/                               docker-compose.yml, mosquitto/mosquitto.conf
-docs/                                 glossary.md, streaming-stats.md (Phase 2 notes), topics.md (topic scheme, payload)
+docs/                                 glossary.md, streaming-stats.md (Phase 2 notes), topics.md (topic scheme, payload), sensor-node.md (component overview).
 scripts/format.sh                     clang-format wrapper
 ```
 

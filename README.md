@@ -22,7 +22,7 @@ Add your user to the `docker` group to run Docker without `sudo`:
 
 ## Structure
 
-- `sensor-node/`: simulated sensor node and data generator (noisy value, noise-free `truth`, `is_anomaly` flag, fixed seed); publishes to MQTT (v1 payload with `seq`, Last Will status)
+- `sensor-node/`: simulated sensor node and data generator (noisy value, noise-free `truth`, `is_anomaly` flag, fixed seed); publishes to MQTT (v1 payload with `seq`, Last Will status). See [sensor-node.md](docs/sensor-node.md).
 - `collector/`: receives and processes the data
 - `stats/`: header-only streaming statistics with tests and benchmarks
 - `deploy/`: docker compose (Mosquitto broker)

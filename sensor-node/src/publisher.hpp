@@ -5,7 +5,6 @@
 #include <string>
 
 #include "generator.hpp"
-#include "payload.hpp"
 
 struct PublisherConfig {
 	std::string broker_uri = "tcp://localhost:1883";
