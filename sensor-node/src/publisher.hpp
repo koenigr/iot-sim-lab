@@ -5,6 +5,7 @@
 #include <string>
 
 #include "generator.hpp"
+#include "payload.hpp"
 
 struct PublisherConfig {
 	std::string broker_uri = "tcp://localhost:1883";
@@ -16,9 +17,6 @@ struct PublisherConfig {
 	std::string unit = "C";
 	int qos = 1;
 };
-
-std::string make_payload_v1(const Sample& s, std::uint64_t seq,
-                            const std::string& unit);
 
 class Publisher {
 public:
