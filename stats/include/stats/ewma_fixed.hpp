@@ -21,7 +21,7 @@ public:
 
 	// Out-of-range alpha is clamped to [0, kOne].
 	constexpr explicit EwmaFixed(int32_t alpha_q16 = kOne / 4)
-		: alpha_{std::clamp(alpha_q16, std::int32_t{0}, kOne)} {
+	    : alpha_{std::clamp(alpha_q16, std::int32_t{0}, kOne)} {
 	}
 
 	// Returns the new filtered value (Q16.16).
@@ -36,7 +36,7 @@ public:
 		// |alpha*diff| <= 2^16 * 2^32 = 2^48, fits int64.
 		// +0.5 LSB before the shift = round half up (also for negatives).
 		const int64_t delta =
-			((static_cast<int64_t>(alpha_) * diff) + (kOne >> 1)) >> kFrac;
+		    ((static_cast<int64_t>(alpha_) * diff) + (kOne >> 1)) >> kFrac;
 		// alpha in [0,1] => y + delta lies between y and x => no int32
 		// overflow.
 		y_ = static_cast<int32_t>(y_ + delta);

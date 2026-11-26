@@ -5,7 +5,7 @@
 #include <iomanip>
 
 Generator::Generator(GeneratorConfig cfg)
-	: cfg_(cfg), rng_(cfg.seed), spike_mag_(cfg.spike_min, cfg.spike_max) {
+    : cfg_(cfg), rng_(cfg.seed), spike_mag_(cfg.spike_min, cfg.spike_max) {
 }
 
 Sample Generator::next() {
@@ -28,9 +28,9 @@ Sample Generator::next() {
 	}
 
 	return Sample{.timestamp = cfg_.start_ts + step_++,
-				  .value = value,
-				  .truth = truth,
-				  .is_anomaly = anomaly};
+	              .value = value,
+	              .truth = truth,
+	              .is_anomaly = anomaly};
 }
 
 void write_csv_header(std::ostream& os) {

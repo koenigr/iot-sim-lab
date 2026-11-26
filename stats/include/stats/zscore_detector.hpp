@@ -26,9 +26,9 @@ public:
 	struct Config {
 		double threshold = 3.0; ///< |z| > threshold  =>  anomaly
 		std::size_t min_samples =
-			10; ///< warm-up: no anomalies reported before this
+		    10; ///< warm-up: no anomalies reported before this
 		bool feed_anomalies =
-			false; ///< feed anomalous samples into the statistics?
+		    false; ///< feed anomalous samples into the statistics?
 	};
 
 	struct Result {
@@ -77,8 +77,8 @@ private:
 			// No spread: identical value is "normal", anything else is
 			// infinitely far away.
 			return x == m ? 0.0
-						  : (x > m ? 1.0 : -1.0) *
-								std::numeric_limits<double>::infinity();
+			              : (x > m ? 1.0 : -1.0) *
+			                    std::numeric_limits<double>::infinity();
 		}
 		return (x - m) / sd;
 	}

@@ -74,14 +74,14 @@ TEST(GeneratorCsv, HeaderAndRowFormat) {
 	std::ostringstream os;
 	write_csv_header(os);
 	write_csv_row(os, Sample{.timestamp = 1000,
-							 .value = 21.4,
-							 .truth = 20.0,
-							 .is_anomaly = false});
+	                         .value = 21.4,
+	                         .truth = 20.0,
+	                         .is_anomaly = false});
 	write_csv_row(os, Sample{.timestamp = 1001,
-							 .value = 45.0,
-							 .truth = 20.1,
-							 .is_anomaly = true});
+	                         .value = 45.0,
+	                         .truth = 20.1,
+	                         .is_anomaly = true});
 	EXPECT_EQ(os.str(), "timestamp,value,truth,is_anomaly\n"
-						"1000,21.40,20.00,0\n"
-						"1001,45.00,20.10,1\n");
+	                    "1000,21.40,20.00,0\n"
+	                    "1001,45.00,20.10,1\n");
 }

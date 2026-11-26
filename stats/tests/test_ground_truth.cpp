@@ -108,8 +108,8 @@ TEST(GroundTruth, DetectorPrecisionRecall) {
 	}
 
 	std::cout << "TP=" << c.tp << " FP=" << c.fp << " FN=" << c.fn
-			  << " precision=" << precision(c) << " recall=" << recall(c)
-			  << '\n';
+	          << " precision=" << precision(c) << " recall=" << recall(c)
+	          << '\n';
 
 	EXPECT_GT(c.tp + c.fn, 0);
 	EXPECT_GE(precision(c), 0.9);

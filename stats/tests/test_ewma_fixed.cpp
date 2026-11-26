@@ -53,7 +53,7 @@ TEST(EwmaFixed, ConvergesToConstantInput) {
 		f.update(target);
 	}
 	EXPECT_LE(std::abs(f.value() - target),
-			  2); // rounding dead-band ~ 0.5/alpha LSB
+	          2); // rounding dead-band ~ 0.5/alpha LSB
 }
 
 TEST(EwmaFixed, ErrorVsDoubleIsBounded) {
@@ -65,7 +65,7 @@ TEST(EwmaFixed, ErrorVsDoubleIsBounded) {
 		double max_err = 0.0;
 
 		std::mt19937 rng{42}; // NOLINT(bugprone-random-generator-seed): fixed
-							  // seed for reproducibility
+		                      // seed for reproducibility
 		std::uniform_real_distribution<double> dist(-1000.0, 1000.0);
 		for (int i = 0; i < 100000; ++i) {
 			const int32_t xq = EwmaFixed::to_fixed(dist(rng));
@@ -80,8 +80,8 @@ TEST(EwmaFixed, ErrorVsDoubleIsBounded) {
 		const double lsb = 1.0 / EwmaFixed::kOne;
 		const double bound = ((0.5 / alpha) + 1.0) * lsb;
 		EXPECT_LE(max_err, bound)
-			<< "alpha=" << alpha << " max_err=" << max_err;
+		    << "alpha=" << alpha << " max_err=" << max_err;
 		RecordProperty("max_abs_err_alpha_" + std::to_string(alpha_q),
-					   std::to_string(max_err));
+		               std::to_string(max_err));
 	}
 }
