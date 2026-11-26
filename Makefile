@@ -75,7 +75,7 @@ tidy-changed:  ## clang-tidy on files changed vs. main
 	cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 	git diff --name-only --diff-filter=d main -- '*.cpp' | xargs -r clang-tidy-18 -p build -quiet
 
-smoke:  ## Smoke-test all important targets (build, test, bench, broker round-trip)
+smoke:  ## Smoke-test all important targets (build, test, tidy, bench, broker + publisher round-trip)
 	@set -e; \
 	trap '$(MAKE) --no-print-directory broker-down' EXIT; \
 	echo "==> clean + build + test"; \
@@ -91,11 +91,19 @@ smoke:  ## Smoke-test all important targets (build, test, bench, broker round-tr
 	$(MAKE) --no-print-directory broker-up; \
 	sleep 2; \
 	out=$$(mktemp); \
-	mosquitto_sub -h localhost -t $(TOPIC) -C 1 -W 5 > $$out & sub=$$!; \
+	mosquitto_sub -h localhost -t '$(TOPIC)' -C 1 -W 5 > $$out & sub=$$!; \
 	sleep 1; \
 	$(MAKE) --no-print-directory broker-pub MSG=smoke-ok; \
 	wait $$sub; \
 	grep -q smoke-ok $$out; \
 	rm -f $$out; \
+	echo "==> publisher round-trip"; \
+	out=$$(mktemp); \
+	mosquitto_sub -h localhost -t 'lab/+/+/+/+' -C 1 -W 10 > $$out & sub=$$!; \
+	sleep 1; \
+	timeout 3 ./$(BUILD_DIR)/sensor-node/sensor-node || true; \
+	wait $$sub; \
+	grep -q '"seq":0' $$out; \
+	rm -f $$out;
 	$(MAKE) --no-print-directory broker-stop; \
 	echo "==> smoke OK"

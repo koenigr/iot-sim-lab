@@ -91,7 +91,7 @@ Benchmarks only count in Release (`-DCMAKE_BUILD_TYPE=Release`, dir `build-rel/`
   - Metrics: precision = TP / (TP + FP), recall = TP / (TP + FN). Pinned result for seed 42: TP=21, FP=0, FN=0.
 - `std::normal_distribution` is not bit-exact across standard libraries, so pinned counts may differ on other toolchains; if CI differs from local, loosen to bounds instead of exact counts.
 
-## Phase 2 status (issues)
+## Phase 2 status (done, reference)
 
 | # | Task | Status |
 |---|------|--------|
@@ -107,20 +107,21 @@ Benchmarks only count in Release (`-DCMAKE_BUILD_TYPE=Release`, dir `build-rel/`
 | 10 | Ground-truth tests | done (pin exact counts, close) |
 | 11 | Micro-benchmarks | in progress: run in Release, record results |
 | 12 | `docs/streaming-stats.md` | done |
-| 16 | Publisher: new topics, v1 payload, seq, LWT | in progress |
 
-Status is taken from the file tree, not from GitHub (`gh` is not installed locally); verify on the issue tracker.
+## Phase 3 status (issues)
+
+| # | Task | Status |
+|---|------|--------|
+| 16 | Publisher: new topics, v1 payload, seq, LWT | in progress: code, payload unit test (`sensor-node/tests/test_payload.cpp`) and `make smoke` round-trip |
 
 Open housekeeping:
-- `HeaderFilterRegex` covers `sensor-node/`, so `publisher.cpp` is clang-tidy checked; the empty `catch (...)` in the destructor may trigger `bugprone-empty-catch`, so log or annotate it.
-- No automated test for the publisher yet; `make smoke` or a test against the broker is open.
-- `README.md`: add the Paho requirement and the "Run the sensor node" section.
+- Publisher connection/LWT behaviour is only covered by the manual `kill -9` check; no automated test for the `offline` message yet.
 
 ## Definition of done (per issue)
 
 1. Code in the path named by the issue, test registered in CMake.
-2. `make tests` green, `make format` clean, pre-commit passes.
-3. Design decision documented (header comment or `docs/streaming-stats.md`).
+2. `make smoke`  passes, CI-Actions pass.
+3. Design decision documented (header comment or in `docs/`).
 4. Commit message ends with `Closes #N`.
 
 ## Do not

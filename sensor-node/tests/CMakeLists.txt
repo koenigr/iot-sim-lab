@@ -6,7 +6,8 @@ FetchContent_MakeAvailable(googletest)
 add_executable(smoke
 	test_smoke.cpp
 	test_generator.cpp
+	test_payload.cpp
 )
-target_link_libraries(smoke PRIVATE generator GTest::gtest_main)
+target_link_libraries(smoke PRIVATE generator payload GTest::gtest_main)
 include(GoogleTest)
 gtest_discover_tests(smoke)
