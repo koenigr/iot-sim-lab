@@ -8,7 +8,7 @@ add_compile_options(-Wall -Wextra -Wpedantic)
 
 option(ENABLE_CLANG_TIDY "Run clang-tidy during build" OFF)
 if(ENABLE_CLANG_TIDY)
-	find_program(CLANG_TIDY_EXE NAMES clang-tidy REQUIRED)
+	find_program(CLANG_TIDY_EXE NAMES clang-tidy-18 REQUIRED)
 	set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY_EXE})
 endif()
 

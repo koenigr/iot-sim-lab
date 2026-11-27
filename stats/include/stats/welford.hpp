@@ -23,13 +23,13 @@ public:
 	// sample variance (n-1)
 	[[nodiscard]] double variance() const noexcept {
 		return n_ > 1 ? m2_ / static_cast<double>(n_ - 1)
-					  : std::numeric_limits<double>::quiet_NaN();
+		              : std::numeric_limits<double>::quiet_NaN();
 	}
 
 	// population variance (n)
 	[[nodiscard]] double variance_pop() const noexcept {
 		return n_ > 0 ? m2_ / static_cast<double>(n_)
-					  : std::numeric_limits<double>::quiet_NaN();
+		              : std::numeric_limits<double>::quiet_NaN();
 	}
 
 private:

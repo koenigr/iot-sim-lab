@@ -4,9 +4,9 @@ Guidance for coding agents working in `iot-sim-lab`.
 
 ## Project
 
-Hardware-free C++/IoT practice project that resembles embedded work: a simulated sensor node publishes data over MQTT, a collector processes it, and a dashboard shows the result. Everything runs without hardware (Docker, Mosquitto).
+Hardware-free C++/IoT practice project that resembles embedded work: a simulated sensor node publishes data over MQTT, a collector processes and stores it, and a dashboard shows the result. Everything runs without hardware (Docker, Mosquitto).
 
-Current scope: **Phase 2, streaming statistics** (`stats/`), fed by the data generator in `sensor-node/`.
+Current scope: **Phase 3, Collector + Storage + Dashboard** ([milestone](https://github.com/koenigr/iot-sim-lab/milestone/2)). The collector subscribes to the sensor-node topics (v1 payload, `seq`, node status via Last Will), the streaming statistics from Phase 2 (`stats/`) are its processing building blocks. Phase 2 is finished; its status table below is kept for reference.
 
 Rule for all docs, README and commit messages: **only claim what is provable in the repo** (code, test, benchmark, doc). No buzzwords without evidence.
 
@@ -14,6 +14,8 @@ Rule for all docs, README and commit messages: **only claim what is provable in 
 
 ```
 sensor-node/src/generator.{hpp,cpp}   synthetic sensor data with ground truth (CMake target: generator)
+sensor-node/src/publisher.{hpp,cpp}   MQTT publisher (paho-mqtt-cpp): topic scheme, v1 payload, seq, Last Will (CMake target: sensor-node)
+sensor-node/src/main.cpp              wires Generator -> Publisher, broker URI via MQTT_URI
 sensor-node/tests/                    generator tests
 stats/include/stats/                  header-only library (ring_buffer, moving_average, ewma,
                                       ewma_fixed, median_filter, welford, zscore_detector)
@@ -21,11 +23,11 @@ stats/tests/                          GoogleTest, files named test_*.cpp
 stats/bench/stats_bench.cpp           Google Benchmark
 collector/src/                        C++ subscriber (later consumer of the detector)
 deploy/                               docker-compose.yml, mosquitto/mosquitto.conf
-docs/                                 glossary.md, streaming-stats.md (Phase 2 notes)
+docs/                                 glossary.md, streaming-stats.md (Phase 2 notes), topics.md (topic scheme, payload), sensor-node.md (component overview).
 scripts/format.sh                     clang-format wrapper
 ```
 
-Dependencies: `stats_tests` links `stats` (INTERFACE) + `generator` + `gtest_main`. GoogleTest and Google Benchmark come via FetchContent.
+Dependencies: `stats_tests` links `stats` (INTERFACE) + `generator` + `gtest_main`. GoogleTest and Google Benchmark come via FetchContent. `sensor-node` links `generator` + Eclipse Paho MQTT C++ (`libpaho-mqttpp-dev libpaho-mqtt-dev`; also installed in CI). `stats` stays dependency-free.
 
 ## Commands
 
@@ -40,6 +42,8 @@ make broker-up      # start Mosquitto (docker compose, deploy/)
 make broker-down    # stop and remove broker containers
 make broker-sub     # mosquitto_sub, TOPIC=test/topic
 make broker-pub     # mosquitto_pub, TOPIC=... MSG=...
+make sensor-node    # build and run the publisher against localhost:1883
+make broker-sub     # mosquitto_sub, TOPIC=lab/# (-v)
 pre-commit run --all-files
 ```
 
@@ -63,6 +67,8 @@ Benchmarks only count in Release (`-DCMAKE_BUILD_TYPE=Release`, dir `build-rel/`
 - `clang-format` and `clang-tidy` must pass. Tests have their own `stats/tests/.clang-tidy`.
 - Do not use `float`/`double` in the fixed-point path except in `to_fixed`/`to_double` helpers (tests and setup only).
 - Document non-obvious design decisions in a header comment (see `zscore_detector.hpp`).
+- The MCU/no-exceptions rules apply to `stats/` only. `sensor-node/` (publisher) may use exceptions and the heap.
+- Payload contains `v`, `ts`, `value`, `unit`, `seq`. `truth` and `is_anomaly` are test-only and are never published.
 
 ## Design decisions (keep consistent)
 
@@ -72,6 +78,9 @@ Benchmarks only count in Release (`-DCMAKE_BUILD_TYPE=Release`, dir `build-rel/`
 - **MedianFilter:** odd window, no heap; returns `std::optional` until the window is full.
 - **EwmaFixed:** Q16.16, alpha in Q16 (0.25 = 16384), `int64_t` intermediates, round half up, alpha clamped to `[0, 1]`.
 - **ZScoreDetector:** uses population stddev. Anomalous samples are **not** fed into the statistics (avoids masking), except during warm-up (`min_samples`). Trade-off: no adaptation after a permanent level shift; `feed_anomalies = true` or `reset()` as remedy.
+- **Topics:** data `site/area/node/sensor/metric`, status `site/area/node/status` (retained). Details in `docs/topics.md`.
+- **Payload v1:** `{"v":1,"ts":..,"value":..,"unit":"..","seq":..}`. `seq` starts at 0 per process run and increments per published sample; the collector can detect gaps.
+- **Last Will:** `offline` (retained, QoS 1) on the status topic; `online` is published after connect; the destructor publishes `offline` explicitly, because the LWT only fires on unclean disconnects.
 
 ## Testing conventions
 
@@ -82,7 +91,7 @@ Benchmarks only count in Release (`-DCMAKE_BUILD_TYPE=Release`, dir `build-rel/`
   - Metrics: precision = TP / (TP + FP), recall = TP / (TP + FN). Pinned result for seed 42: TP=21, FP=0, FN=0.
 - `std::normal_distribution` is not bit-exact across standard libraries, so pinned counts may differ on other toolchains; if CI differs from local, loosen to bounds instead of exact counts.
 
-## Phase 2 status (issues)
+## Phase 2 status (done, reference)
 
 | # | Task | Status |
 |---|------|--------|
@@ -97,22 +106,22 @@ Benchmarks only count in Release (`-DCMAKE_BUILD_TYPE=Release`, dir `build-rel/`
 | 9 | Generator ground truth | done |
 | 10 | Ground-truth tests | done (pin exact counts, close) |
 | 11 | Micro-benchmarks | in progress: run in Release, record results |
-| 12 | `docs/streaming-stats.md` | open |
+| 12 | `docs/streaming-stats.md` | done |
 
-Status is taken from the file tree, not from GitHub (`gh` is not installed locally); verify on the issue tracker.
+## Phase 3 status (issues)
+
+| # | Task | Status |
+|---|------|--------|
+| 16 | Publisher: new topics, v1 payload, seq, LWT | in progress: code, payload unit test (`sensor-node/tests/test_payload.cpp`) and `make smoke` round-trip |
 
 Open housekeeping:
-- `README.md` structure section still lists only ring buffer, moving average, EWMA; add median filter, Welford, z-score detector, fixed-point EWMA, benchmarks.
-- `bench` and `bench-build` have no `##` help comments, so they are missing from `make help`.
-- `docs/` currently holds only `glossary.md`.
-
-Issue #12 sections: Ring buffer, Filters (MA vs. EWMA vs. median), Welford and numerical stability, Fixed-point (Q16.16), Benchmark results.
+- Publisher connection/LWT behaviour is only covered by the manual `kill -9` check; no automated test for the `offline` message yet.
 
 ## Definition of done (per issue)
 
 1. Code in the path named by the issue, test registered in CMake.
-2. `make tests` green, `make format` clean, pre-commit passes.
-3. Design decision documented (header comment or `docs/streaming-stats.md`).
+2. `make smoke`  passes, CI-Actions pass.
+3. Design decision documented (header comment or in `docs/`).
 4. Commit message ends with `Closes #N`.
 
 ## Do not

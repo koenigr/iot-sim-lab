@@ -12,6 +12,7 @@ Hardware-free C++/IoT practice project: simulated sensor nodes publish data via 
 | `mosquitto-clients` | `broker-sub`, `broker-pub`, `make smoke` | `sudo apt install mosquitto-clients` |
 | `clang-format` | `make format` | `sudo apt install clang-format` |
 | `pre-commit` | commit hooks | `pip install pre-commit` |
+| Eclipse Paho MQTT C++ | `sensor-node` (MQTT publisher) | `sudo apt install libpaho-mqttpp-dev libpaho-mqtt-dev` |
 
 GoogleTest and Google Benchmark are used for tests and benchmarks (see `CMakeLists.txt` for how they are fetched).
 
@@ -21,7 +22,7 @@ Add your user to the `docker` group to run Docker without `sudo`:
 
 ## Structure
 
-- `sensor-node/`: simulated sensor node and data generator (noisy value, noise-free `truth`, `is_anomaly` flag, fixed seed)
+- `sensor-node/`: simulated sensor node and data generator (noisy value, noise-free `truth`, `is_anomaly` flag, fixed seed); publishes to MQTT (v1 payload with `seq`, Last Will status). See [sensor-node.md](docs/sensor-node.md).
 - `collector/`: receives and processes the data
 - `stats/`: header-only streaming statistics with tests and benchmarks
 - `deploy/`: docker compose (Mosquitto broker)
@@ -82,7 +83,19 @@ Pre-commit hooks (once per clone):
 
     make broker-sub                  # subscribe to test/topic
     make broker-pub                  # publish "hello" to test/topic
-    make broker-pub TOPIC=sensors/temp MSG=21.5
+    make broker-pub TOPIC=sensors/temp MSG=21.
+
+## Run the sensor node
+
+    make broker-up
+    make sensor-node                 # publishes 20 samples, 1 per second
+    make broker-sub               # subscribe to lab/# (override with TOPIC=...)
+
+The broker URI can be overridden with `MQTT_URI` (default `tcp://localhost:1883`).
+
+Topics and payload: [topics.md](docs/topics.md)
+
+Check the Last Will: kill the node with `kill -9`. The retained status topic `lab/<area>/<node>/status` switches from `online` to `offline` after the keep-alive timeout.
 
 ## Close the broker
 
